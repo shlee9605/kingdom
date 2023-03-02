@@ -1,8 +1,8 @@
 import 'dart:convert';
-import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+
+import 'apiutil.dart';
 
 class Buildings with ChangeNotifier {
   //state
@@ -38,12 +38,12 @@ class Buildings with ChangeNotifier {
   //actions/mutations
   Future<void> readBuilding(String id) async {
     // 1. Check Response
-    final response = await http.get(Uri.parse(
-        '${dotenv.env['SERVER_URL']}${dotenv.env['BASE_URL']}user?param=$id'));
+    final response = await api.get(
+        '${dotenv.env['SERVER_URL']}${dotenv.env['BASE_URL']}user?param=$id');
     if (response.statusCode != 200) {
-      throw HttpException("${response.statusCode}, Invalid GET Reponse");
+      throw Exception("${response.statusCode}, Invalid GET Reponse");
     }
-    final data = json.decode(response.body);
+    final data = response.data;
 
     // 2. Review Bussiness Logic
     try {
@@ -51,7 +51,7 @@ class Buildings with ChangeNotifier {
         building[i].number = data['buildings'][building[i].name];
       }
     } catch (error) {
-      throw const HttpException("400, Building Data Invalid");
+      throw Exception("400, Building Data Invalid");
     }
 
     // 3. Apply State Changes
@@ -64,19 +64,17 @@ class Buildings with ChangeNotifier {
     final Map<String, int> params = {};
     for (int i = 0; i < building.length; i++) {
       if (building[i].number == null) {
-        throw HttpException("400, ${building[i].name} Data Invalid");
+        throw Exception("400, ${building[i].name} Data Invalid");
       }
       params[building[i].name!] = building[i].number!;
     }
 
     // 2. Check Response
-    final response = await http.put(
-        Uri.parse(
-            '${dotenv.env['SERVER_URL']}${dotenv.env['BASE_URL']}tree/buildings?param=$id'),
-        headers: {"Content-Type": "application/json"},
-        body: json.encode(params));
+    final response = await api.put(
+        '${dotenv.env['SERVER_URL']}${dotenv.env['BASE_URL']}tree/buildings?param=$id',
+        data: json.encode(params));
     if (response.statusCode != 200) {
-      throw HttpException("${response.statusCode}, Invalid PUT Reponse");
+      throw Exception("${response.statusCode}, Invalid PUT Reponse");
     }
 
     // 3. Apply State Changes

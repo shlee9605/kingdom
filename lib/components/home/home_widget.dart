@@ -118,7 +118,7 @@ class HomeBodyCameraState extends State<HomeBodyCamera> {
       color: const Color.fromARGB(100, 255, 255, 255),
       child: InkWell(
         onTap: () {
-          Modal.showModal(context);
+          Modal.homeBodyCamera(context);
         },
         onHover: (value) {
           setState(() {

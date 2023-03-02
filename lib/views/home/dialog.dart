@@ -3,7 +3,7 @@ import 'package:basic/stores/product.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '/components/homedialog_widget.dart';
+import '/components/home/homedialog_widget.dart';
 import '/stores/technology.dart';
 import '/stores/building.dart';
 
@@ -48,6 +48,35 @@ class Modal {
       },
     );
   }
+
+  static void homeBodyCamera(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return Dialog(
+          child: SizedBox(
+            height: MediaQuery.of(context).size.width / 2,
+            width: MediaQuery.of(context).size.height / 2,
+            child: Scaffold(
+                appBar: AppBar(
+                  title: const Text('Modal'),
+                ),
+                body: const Text('hello world'),
+                bottomNavigationBar: Row(
+                  children: [
+                    ElevatedButton(
+                      onPressed: () {
+                        Navigator.of(context).pushNamed('/login');
+                      },
+                      child: const Text("to Login"),
+                    ),
+                  ],
+                )),
+          ),
+        );
+      },
+    );
+  }
 }
 
 class HomeSheetTech extends StatefulWidget {
@@ -59,16 +88,14 @@ class HomeSheetTech extends StatefulWidget {
 }
 
 class HomeSheetTechState extends State<HomeSheetTech> {
-  final List<TextEditingController> _controllers = [];
+  List<String> _controllers = [];
 
   @override
   void initState() {
     List<Technology> technologies =
         context.read<Technologies>().getTechnology();
-    for (int i = 0; i < technologies.length; i++) {
-      _controllers
-          .add(TextEditingController(text: technologies[i].level.toString()));
-    }
+    _controllers = List.generate(
+        technologies.length, (index) => technologies[index].level.toString());
     super.initState();
   }
 
@@ -97,16 +124,14 @@ class HomeSheetBuild extends StatefulWidget {
 }
 
 class HomeSheetBuildState extends State<HomeSheetBuild> {
-  final List<TextEditingController> _controllers = [];
+  List<String> _controllers = [];
 
   @override
   void initState() {
     super.initState();
     List<Building> buildings = context.read<Buildings>().getBuilding();
-    for (int i = 0; i < buildings.length; i++) {
-      _controllers
-          .add(TextEditingController(text: buildings[i].number.toString()));
-    }
+    _controllers = List.generate(
+        buildings.length, (index) => buildings[index].number.toString());
   }
 
   @override
@@ -133,7 +158,7 @@ class HomeSheetProd extends StatefulWidget {
 }
 
 class HomeSheetProdState extends State<HomeSheetProd> {
-  final Map<String?, List<TextEditingController>> _controllers = {
+  final Map<String, List<String>> _controllers = {
     'supplies': [],
     'demands': [],
   };
@@ -143,10 +168,10 @@ class HomeSheetProdState extends State<HomeSheetProd> {
     super.initState();
     List<Product> products = context.read<Products>().getProduct();
     for (int i = 0; i < products.length; i++) {
-      _controllers['supplies']!
-          .add(TextEditingController(text: products[i].supplies.toString()));
-      _controllers['demands']!
-          .add(TextEditingController(text: products[i].demands.toString()));
+      _controllers['supplies'] = List.generate(
+          products.length, (index) => products[index].supplies.toString());
+      _controllers['demands'] = List.generate(
+          products.length, (index) => products[index].demands.toString());
     }
   }
 

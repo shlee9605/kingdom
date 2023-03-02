@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import 'views/home/index.dart';
-import 'stores/technology.dart';
-import 'stores/building.dart';
-import 'stores/product.dart';
+import 'router.dart';
+
+import 'stores/index.dart';
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-  // This widget is the root of your application.
+  MyApp({super.key});
+
+  final NavigatorGuardObserver navigationGuard = NavigatorGuardObserver();
+
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
@@ -22,6 +23,9 @@ class MyApp extends StatelessWidget {
           ChangeNotifierProvider<Products>(
             create: (context) => Products(),
           ),
+          ChangeNotifierProvider<Token>(
+            create: (context) => Token(),
+          ),
         ],
         child: MaterialApp(
           title: 'Cookie Kingdom',
@@ -29,7 +33,9 @@ class MyApp extends StatelessWidget {
             //app's theme color
             primarySwatch: Colors.amber,
           ),
-          home: const MyHomePage(title: 'Home Page'),
+          navigatorObservers: [navigationGuard],
+          initialRoute: '/login',
+          routes: appRoutes,
         ));
   }
 }
