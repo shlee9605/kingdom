@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '/components/home_widget.dart';
+import '/components/home/home_widget.dart';
 import '/stores/technology.dart';
 import '/stores/building.dart';
 import '/stores/product.dart';
+import '/stores/auth.dart';
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key, required this.title});
@@ -21,12 +22,14 @@ class _MyHomePageState extends State<MyHomePage> {
     context.read<Technologies>().readTechnology("camel");
     context.read<Buildings>().readBuilding("camel");
     context.read<Products>().readProduct("camel");
+    print(context.read<Token>().getCurrentUser().userid);
   }
 
   //init
   @override
   void initState() {
     initUserData();
+    // Future.wait([]);
     super.initState();
   }
 

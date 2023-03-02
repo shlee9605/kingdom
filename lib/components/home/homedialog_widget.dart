@@ -1,3 +1,4 @@
+import 'package:basic/components/alertdialog_widget.dart';
 import 'package:flutter/material.dart';
 
 import '/stores/technology.dart';
@@ -61,13 +62,32 @@ class HomeSheetBar extends StatelessWidget {
   }
 }
 
-class HomeSheetBodyTech extends StatelessWidget {
+class HomeSheetBodyTech extends StatefulWidget {
   const HomeSheetBodyTech(
       {super.key, required this.controllers, required this.technology});
-
-  final List<TextEditingController> controllers;
+  final List<String> controllers;
   final Technologies technology;
 
+  @override
+  HomeSheetBodyTechState createState() => HomeSheetBodyTechState();
+}
+
+class HomeSheetBodyTechState extends State<HomeSheetBodyTech> {
+  // 1. Set Data
+  final valueList_5 = {'0', '1', '2', '3', '4', '5'};
+  final valueList_10 = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10'};
+  List<String> controllers = [];
+  List<Technology> technologies = [];
+
+  // 2. Init Data
+  @override
+  void initState() {
+    super.initState();
+    technologies = widget.technology.getTechnology();
+    controllers = widget.controllers;
+  }
+
+  // 3. Build Widget
   @override
   Widget build(BuildContext context) {
     return Expanded(
@@ -80,7 +100,7 @@ class HomeSheetBodyTech extends StatelessWidget {
                 color: const Color.fromARGB(100, 70, 70, 70), width: 1.0),
           ),
           child: ListView.builder(
-            itemCount: technology.getTechnology().length + 1,
+            itemCount: technologies.length + 1,
             itemBuilder: (context, index) {
               return Column(
                 children: [
@@ -90,8 +110,7 @@ class HomeSheetBodyTech extends StatelessWidget {
                       children: [
                         Expanded(
                           child: index != 0
-                              ? Text(
-                                  technology.getTechnology()[index - 1].display,
+                              ? Text(technologies[index - 1].display!,
                                   textAlign: TextAlign.center)
                               : const Text("연구", textAlign: TextAlign.center),
                         ),
@@ -101,12 +120,32 @@ class HomeSheetBodyTech extends StatelessWidget {
                           thickness: 1,
                         ),
                         Expanded(
-                            child: index != 0
-                                ? TextField(
-                                    controller: controllers[index - 1],
-                                    textAlign: TextAlign.center)
-                                : const Text("레벨",
-                                    textAlign: TextAlign.center)),
+                          child: index != 0
+                              ? Center(
+                                  child: DropdownButton(
+                                      value: controllers[index - 1],
+                                      onChanged: (value) {
+                                        setState(() {
+                                          controllers[index - 1] =
+                                              value.toString();
+                                        });
+                                      },
+                                      items: index > 1 && index < 6
+                                          ? valueList_5.map((item) {
+                                              return DropdownMenuItem(
+                                                value: item,
+                                                child: Text(item),
+                                              );
+                                            }).toList()
+                                          : valueList_10.map((item) {
+                                              return DropdownMenuItem(
+                                                value: item,
+                                                child: Text(item),
+                                              );
+                                            }).toList()),
+                                )
+                              : const Text("레벨", textAlign: TextAlign.center),
+                        ),
                       ],
                     ),
                   ),
@@ -125,13 +164,32 @@ class HomeSheetBodyTech extends StatelessWidget {
   }
 }
 
-class HomeSheetBodyBuild extends StatelessWidget {
+class HomeSheetBodyBuild extends StatefulWidget {
   const HomeSheetBodyBuild(
       {super.key, required this.controllers, required this.building});
 
-  final List<TextEditingController> controllers;
+  final List<String> controllers;
   final Buildings building;
 
+  @override
+  HomeSheetBodyBuildState createState() => HomeSheetBodyBuildState();
+}
+
+class HomeSheetBodyBuildState extends State<HomeSheetBodyBuild> {
+  // 1. Set Data
+  final valueList = {'0', '1', '2'};
+  List<String> controllers = [];
+  List<Building> buildings = [];
+
+  // 2. Init Data
+  @override
+  void initState() {
+    super.initState();
+    buildings = widget.building.getBuilding();
+    controllers = widget.controllers;
+  }
+
+  // 3. Build Widget
   @override
   Widget build(BuildContext context) {
     return Expanded(
@@ -144,7 +202,7 @@ class HomeSheetBodyBuild extends StatelessWidget {
                 color: const Color.fromARGB(100, 70, 70, 70), width: 1.0),
           ),
           child: ListView.builder(
-            itemCount: building.getBuilding().length + 1,
+            itemCount: buildings.length + 1,
             itemBuilder: (context, index) {
               return Column(
                 children: [
@@ -154,7 +212,7 @@ class HomeSheetBodyBuild extends StatelessWidget {
                       children: [
                         Expanded(
                           child: index != 0
-                              ? Text(building.getBuilding()[index - 1].display,
+                              ? Text(buildings[index - 1].display!,
                                   textAlign: TextAlign.center)
                               : const Text("건물", textAlign: TextAlign.center),
                         ),
@@ -164,12 +222,25 @@ class HomeSheetBodyBuild extends StatelessWidget {
                           thickness: 1,
                         ),
                         Expanded(
-                            child: index != 0
-                                ? TextField(
-                                    controller: controllers[index - 1],
-                                    textAlign: TextAlign.center)
-                                : const Text("개수",
-                                    textAlign: TextAlign.center)),
+                          child: index != 0
+                              ? Center(
+                                  child: DropdownButton(
+                                      value: controllers[index - 1],
+                                      onChanged: (value) {
+                                        setState(() {
+                                          controllers[index - 1] =
+                                              value.toString();
+                                        });
+                                      },
+                                      items: valueList.map((item) {
+                                        return DropdownMenuItem(
+                                          value: item,
+                                          child: Text(item),
+                                        );
+                                      }).toList()),
+                                )
+                              : const Text("개수", textAlign: TextAlign.center),
+                        ),
                       ],
                     ),
                   ),
@@ -188,13 +259,32 @@ class HomeSheetBodyBuild extends StatelessWidget {
   }
 }
 
-class HomeSheetBodyProd extends StatelessWidget {
+class HomeSheetBodyProd extends StatefulWidget {
   const HomeSheetBodyProd(
       {super.key, required this.controllers, required this.product});
 
-  final Map<String?, List<TextEditingController>> controllers;
+  final Map<String, List<String>> controllers;
   final Products product;
 
+  @override
+  HomeSheetBodyProdState createState() => HomeSheetBodyProdState();
+}
+
+class HomeSheetBodyProdState extends State<HomeSheetBodyProd> {
+  // 1. Set Data
+  final valueList = {'O', 'X'};
+  Map<String, List<String>> controllers = {};
+  List<Product> products = [];
+
+  // 2. Init Data
+  @override
+  void initState() {
+    super.initState();
+    products = widget.product.getProduct();
+    controllers = widget.controllers;
+  }
+
+  // 3. Build Widget
   @override
   Widget build(BuildContext context) {
     return Expanded(
@@ -207,7 +297,7 @@ class HomeSheetBodyProd extends StatelessWidget {
                 color: const Color.fromARGB(100, 70, 70, 70), width: 1.0),
           ),
           child: ListView.builder(
-            itemCount: product.getProduct().length + 1,
+            itemCount: products.length + 1,
             itemBuilder: (context, index) {
               return Column(
                 children: [
@@ -217,7 +307,7 @@ class HomeSheetBodyProd extends StatelessWidget {
                       children: [
                         Expanded(
                           child: index != 0
-                              ? Text(product.getProduct()[index - 1].display,
+                              ? Text(products[index - 1].display!,
                                   textAlign: TextAlign.center)
                               : const Text("제품", textAlign: TextAlign.center),
                         ),
@@ -228,10 +318,23 @@ class HomeSheetBodyProd extends StatelessWidget {
                         ),
                         Expanded(
                             child: index != 0
-                                ? TextField(
-                                    controller:
-                                        controllers['supplies']![index - 1],
-                                    textAlign: TextAlign.center)
+                                ? Center(
+                                    child: DropdownButton(
+                                        value:
+                                            controllers['supplies']![index - 1],
+                                        onChanged: (value) {
+                                          setState(() {
+                                            controllers['supplies']![
+                                                index - 1] = value.toString();
+                                          });
+                                        },
+                                        items: valueList.map((item) {
+                                          return DropdownMenuItem(
+                                            value: item,
+                                            child: Text(item),
+                                          );
+                                        }).toList()),
+                                  )
                                 : const Text("개방",
                                     textAlign: TextAlign.center)),
                         const VerticalDivider(
@@ -241,10 +344,23 @@ class HomeSheetBodyProd extends StatelessWidget {
                         ),
                         Expanded(
                             child: index != 0
-                                ? TextField(
-                                    controller:
-                                        controllers['demands']![index - 1],
-                                    textAlign: TextAlign.center)
+                                ? Center(
+                                    child: DropdownButton(
+                                        value:
+                                            controllers['demands']![index - 1],
+                                        onChanged: (value) {
+                                          setState(() {
+                                            controllers['demands']![index - 1] =
+                                                value.toString();
+                                          });
+                                        },
+                                        items: valueList.map((item) {
+                                          return DropdownMenuItem(
+                                            value: item,
+                                            child: Text(item),
+                                          );
+                                        }).toList()),
+                                  )
                                 : const Text("납품 허용",
                                     textAlign: TextAlign.center)),
                       ],
@@ -268,7 +384,7 @@ class HomeSheetBodyProd extends StatelessWidget {
 class HomeSheetBottomTech extends StatelessWidget {
   const HomeSheetBottomTech(
       {super.key, required this.controllers, required this.technology});
-  final List<TextEditingController> controllers;
+  final List<String> controllers;
   final Technologies technology;
 
   @override
@@ -281,26 +397,14 @@ class HomeSheetBottomTech extends StatelessWidget {
           ElevatedButton(
             style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
             onPressed: () {
-              try {
-                // 1. Set Data
-                final technologies = technology.getTechnology();
+              // 1. Set Data
+              final technologies = technology.getTechnology();
+              for (int i = 0; i < technologies.length; i++) {
+                technologies[i].level = int.parse(controllers[i]);
+              }
 
-                // 2. Data Validate
-                for (int i = 0; i < technologies.length; i++) {
-                  if ((int.parse(controllers[i].text)) > 10) {
-                    throw Exception();
-                  } else if ((int.parse(controllers[i].text)) > 5 &&
-                      i > 0 &&
-                      i < 5) {
-                    throw Exception();
-                  }
-                  technologies[i].level = int.parse(controllers[i].text);
-                }
-
-                // 3. Execute Logic
-                technology.updateTechnology("camel");
-
-                // 4. Response
+              // 2. Execute Logic
+              technology.updateTechnology("camel").then((value) {
                 showDialog(
                   context: context,
                   builder: (BuildContext context) {
@@ -317,35 +421,17 @@ class HomeSheetBottomTech extends StatelessWidget {
                     );
                   },
                 );
-              }
-              // et. Error
-              catch (error) {
-                showDialog(
-                    context: context,
-                    builder: (BuildContext context) {
-                      return AlertDialog(
-                        content: const Text("입력 값을 확인해주세요"),
-                        actions: <Widget>[
-                          TextButton(
-                            child: const Text("확인"),
-                            onPressed: () {
-                              Navigator.pop(context);
-                            },
-                          ),
-                        ],
-                      );
-                    });
-              }
+              }).catchError((onError) {
+                showError(context, onError);
+              });
             },
             child: const Text('Submit'),
           ),
           ElevatedButton(
             onPressed: () {
-              for (int i = 0; i < technology.getTechnology().length; i++) {
-                controllers[i].text = "";
-              }
+              Navigator.pop(context);
             },
-            child: const Text('Clear'),
+            child: const Text('Close'),
           ),
         ],
       ),
@@ -357,7 +443,7 @@ class HomeSheetBottomBuild extends StatelessWidget {
   const HomeSheetBottomBuild(
       {super.key, required this.controllers, required this.building});
 
-  final List<TextEditingController> controllers;
+  final List<String> controllers;
   final Buildings building;
 
   @override
@@ -370,23 +456,14 @@ class HomeSheetBottomBuild extends StatelessWidget {
           ElevatedButton(
             style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
             onPressed: () {
-              try {
-                // 1. Set Data
-                final buildings = building.getBuilding();
+              // 1. Set Data
+              final buildings = building.getBuilding();
+              for (int i = 0; i < buildings.length; i++) {
+                buildings[i].number = int.parse(controllers[i]);
+              }
 
-                // 2. Data Validate
-                for (int i = 0; i < buildings.length; i++) {
-                  if ((int.parse(controllers[i].text)) > 2 ||
-                      (int.parse(controllers[i].text)) < 0) {
-                    throw Exception("400, ${buildings[i].name} Data Invalid");
-                  }
-                  buildings[i].number = int.parse(controllers[i].text);
-                }
-
-                // 3. Execute Logic
-                building.updateBuilding("camel");
-
-                // 4. Response
+              // 2. Execute Logic
+              building.updateBuilding("camel").then((value) {
                 showDialog(
                   context: context,
                   builder: (BuildContext context) {
@@ -403,35 +480,17 @@ class HomeSheetBottomBuild extends StatelessWidget {
                     );
                   },
                 );
-              }
-              // et. Error
-              catch (error) {
-                showDialog(
-                    context: context,
-                    builder: (BuildContext context) {
-                      return AlertDialog(
-                        content: const Text("입력 값을 확인해주세요"),
-                        actions: <Widget>[
-                          TextButton(
-                            child: const Text("확인"),
-                            onPressed: () {
-                              Navigator.pop(context);
-                            },
-                          ),
-                        ],
-                      );
-                    });
-              }
+              }).catchError((onError) {
+                showError(context, onError);
+              });
             },
             child: const Text('Submit'),
           ),
           ElevatedButton(
             onPressed: () {
-              for (int i = 0; i < building.getBuilding().length; i++) {
-                controllers[i].text = "";
-              }
+              Navigator.pop(context);
             },
-            child: const Text('Clear'),
+            child: const Text('Close'),
           ),
         ],
       ),
@@ -443,7 +502,7 @@ class HomeSheetBottomProd extends StatelessWidget {
   const HomeSheetBottomProd(
       {super.key, required this.controllers, required this.product});
 
-  final Map<String?, List<TextEditingController>> controllers;
+  final Map<String, List<String>> controllers;
   final Products product;
 
   @override
@@ -456,28 +515,17 @@ class HomeSheetBottomProd extends StatelessWidget {
           ElevatedButton(
             style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
             onPressed: () {
-              try {
-                // 1. Set Data
-                final products = product.getProduct();
-                final supplies = controllers['supplies']!;
-                final demands = controllers['demands']!;
+              // 1. Set Data
+              final products = product.getProduct();
+              final supplies = controllers['supplies']!;
+              final demands = controllers['demands']!;
+              for (int i = 0; i < products.length; i++) {
+                products[i].supplies = supplies[i];
+                products[i].demands = demands[i];
+              }
 
-                // 2. Data Validate
-                for (int i = 0; i < products.length; i++) {
-                  if (supplies[i].text != "X" &&
-                      supplies[i].text != "O" &&
-                      demands[i].text != "X" &&
-                      demands[i].text != "O") {
-                    throw Exception("400, ${products[i].name} Data Invalid");
-                  }
-                  products[i].supplies = supplies[i].text;
-                  products[i].demands = demands[i].text;
-                }
-
-                // 3. Execute Logic
-                product.updateProduct("camel");
-
-                // 4. Response
+              // 2. Execute Logic
+              product.updateProduct("camel").then((value) {
                 showDialog(
                     context: context,
                     builder: (BuildContext context) {
@@ -493,36 +541,17 @@ class HomeSheetBottomProd extends StatelessWidget {
                         ],
                       );
                     });
-              }
-              // et. Error
-              catch (error) {
-                showDialog(
-                    context: context,
-                    builder: (BuildContext context) {
-                      return AlertDialog(
-                        content: const Text("입력 값을 확인해주세요"),
-                        actions: <Widget>[
-                          TextButton(
-                            child: const Text("확인"),
-                            onPressed: () {
-                              Navigator.pop(context);
-                            },
-                          ),
-                        ],
-                      );
-                    });
-              }
+              }).catchError((onError) {
+                showError(context, onError);
+              });
             },
             child: const Text('Submit'),
           ),
           ElevatedButton(
             onPressed: () {
-              for (int i = 0; i < product.getProduct().length; i++) {
-                controllers['supplies']![i].text = "";
-                controllers['demands']![i].text = "";
-              }
+              Navigator.pop(context);
             },
-            child: const Text('Clear'),
+            child: const Text('Close'),
           ),
         ],
       ),

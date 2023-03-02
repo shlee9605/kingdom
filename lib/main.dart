@@ -5,5 +5,8 @@ import 'app.dart';
 
 Future main() async {
   await dotenv.load(fileName: ".env");
-  runApp(const MyApp());
+  runApp(MyApp());
 }
+
+// flutter run -d chrome --web-port=8080
+// flutter run -d web-server --web-hostname 0.0.0.0 --web-port 8080
